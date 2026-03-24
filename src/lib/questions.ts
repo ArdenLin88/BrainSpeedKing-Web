@@ -145,6 +145,131 @@ function genLevel10(): Question {
   }
 }
 
+/** Level 11：兩位數 × 個位數（分拆法，11–50 × 2–9）*/
+function genLevel11(): Question {
+  const a = Math.floor(Math.random() * 40) + 11
+  const b = Math.floor(Math.random() * 8) + 2
+  const answer = a * b
+  return {
+    text: `${a} × ${b}`,
+    answer,
+    choices: shuffleChoices(answer, [answer + a, answer - a, answer + b * 10, answer - b]),
+  }
+}
+
+/** Level 12：末位 5 的數平方（n5² = n×(n+1)×100 + 25）*/
+function genLevel12(): Question {
+  const n = Math.floor(Math.random() * 8) + 1  // 1–8 → 15,25,...,85
+  const num = n * 10 + 5
+  const answer = num * num
+  return {
+    text: `${num}²`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 100, answer - 100, answer + 200, answer - 200]),
+  }
+}
+
+/** Level 13：偶數 × 5 速算（n÷2×10）*/
+function genLevel13(): Question {
+  const n = (Math.floor(Math.random() * 44) + 6) * 2  // 12,14,...,100
+  const answer = n * 5
+  return {
+    text: `${n} × 5`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 25, answer - 25, answer + 50, answer - 50]),
+  }
+}
+
+/** Level 14：5 的倍數 ÷ 5 速算（n×2÷10）*/
+function genLevel14(): Question {
+  const result = Math.floor(Math.random() * 38) + 3  // 答案 3–40
+  const num = result * 5
+  return {
+    text: `${num} ÷ 5`,
+    answer: result,
+    choices: shuffleChoices(result, [result + 2, result - 2, result + 5, result - 5]),
+  }
+}
+
+/** Level 15：兩位數加法（必進位）*/
+function genLevel15(): Question {
+  let a: number, b: number
+  do {
+    a = Math.floor(Math.random() * 61) + 15
+    b = Math.floor(Math.random() * 61) + 15
+  } while ((a % 10) + (b % 10) < 10)
+  const answer = a + b
+  return {
+    text: `${a} + ${b}`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 1, answer - 1, answer + 10, answer - 10]),
+  }
+}
+
+/** Level 16：兩位數減法（必借位）*/
+function genLevel16(): Question {
+  let a: number, b: number
+  do {
+    a = Math.floor(Math.random() * 50) + 50  // 50–99
+    b = Math.floor(Math.random() * 40) + 11  // 11–50
+  } while (a % 10 >= b % 10)
+  const answer = a - b
+  return {
+    text: `${a} − ${b}`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 1, answer - 1, answer + 10, answer - 10]),
+  }
+}
+
+/** Level 17：×15 速算（n×10 + n×5，偶數）*/
+function genLevel17(): Question {
+  const n = (Math.floor(Math.random() * 18) + 2) * 2  // 4,6,...,40
+  const answer = n * 15
+  return {
+    text: `${n} × 15`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 15, answer - 15, answer + 30, answer - 30]),
+  }
+}
+
+/** Level 18：×125 速算（n÷8×1000，8 的倍數）*/
+function genLevel18(): Question {
+  const k = Math.floor(Math.random() * 10) + 1  // 1–10
+  const n = k * 8
+  const answer = n * 125
+  return {
+    text: `${n} × 125`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 125, answer - 125, answer + 1000, answer - 1000]),
+  }
+}
+
+/** Level 19：近百乘法（91–99 × 91–99，補數法）*/
+function genLevel19(): Question {
+  const a = Math.floor(Math.random() * 9) + 91
+  const b = Math.floor(Math.random() * 9) + 91
+  const da = 100 - a
+  const db = 100 - b
+  const answer = a * b
+  return {
+    text: `${a} × ${b}`,
+    answer,
+    choices: shuffleChoices(answer, [answer + da * db, answer - da * db, answer + 100, answer - 100]),
+  }
+}
+
+/** Level 20：兩位數×兩位數（大範圍，31–60 × 31–60）*/
+function genLevel20(): Question {
+  const a = Math.floor(Math.random() * 30) + 31
+  const b = Math.floor(Math.random() * 30) + 31
+  const answer = a * b
+  return {
+    text: `${a} × ${b}`,
+    answer,
+    choices: shuffleChoices(answer, [answer + a, answer - a, answer + b, answer - b]),
+  }
+}
+
 const generators: Record<number, () => Question> = {
   1: genLevel1,
   2: genLevel2,
@@ -156,9 +281,19 @@ const generators: Record<number, () => Question> = {
   8: genLevel8,
   9: genLevel9,
   10: genLevel10,
+  11: genLevel11,
+  12: genLevel12,
+  13: genLevel13,
+  14: genLevel14,
+  15: genLevel15,
+  16: genLevel16,
+  17: genLevel17,
+  18: genLevel18,
+  19: genLevel19,
+  20: genLevel20,
 }
 
 export function generateQuestion(level: number): Question {
-  const gen = generators[Math.min(Math.max(level, 1), 10)]
+  const gen = generators[Math.min(Math.max(level, 1), 20)]
   return gen()
 }
