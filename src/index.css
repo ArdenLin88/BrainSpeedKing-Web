@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --timer-normal: #1a1a1a;
+  --timer-warn: #f97316;
+  --timer-critical: #ef4444;
+  --correct: #22c55e;
+  --wrong: #ef4444;
+  --streak: #f59e0b;
+  --accent: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.quiz-question {
+  font-size: clamp(64px, 12vw, 96px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
