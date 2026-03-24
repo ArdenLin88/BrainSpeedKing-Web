@@ -55,7 +55,7 @@ function getCtx(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext()
     masterGain = ctx.createGain()
-    masterGain.gain.value = 0.09   // 背景音量，不蓋過音效
+    masterGain.gain.value = 0.027  // 背景音量（降低 70%）
     masterGain.connect(ctx.destination)
   }
   if (ctx.state === 'suspended') ctx.resume()
