@@ -120,6 +120,9 @@ export default function Quiz({ onComplete, onExit }: Props) {
           >
             ✕
           </button>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[var(--accent)] text-white text-xs font-bold tracking-wide">
+            Lv.{level}
+          </span>
           <span className="text-sm text-[var(--text-secondary)]">
             Q{questionIdx + 1} / {TOTAL_QUESTIONS}
           </span>
