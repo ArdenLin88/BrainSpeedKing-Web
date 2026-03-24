@@ -3,6 +3,7 @@ import { evaluateLevel } from '../lib/adaptive'
 import { loadData, appendSession, updateLevel, saveData } from '../lib/storage'
 import { calculateStreak } from '../lib/streak'
 import ProgressChart from '../components/ProgressChart'
+import TipCard from '../components/TipCard'
 import type { QuizResult } from './Quiz'
 
 interface Props {
@@ -88,6 +89,11 @@ export default function Results({ result, onRestart, onHome }: Props) {
           </span>
         </div>
       )}
+
+      {/* 本關技巧（預設展開，讓玩家學習） */}
+      <div className="mb-6">
+        <TipCard level={level} defaultOpen={true} />
+      </div>
 
       {/* 進度圖表 */}
       <div className="mb-8">

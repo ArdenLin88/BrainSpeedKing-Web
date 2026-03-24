@@ -1,5 +1,6 @@
 import { loadData } from '../lib/storage'
 import ProgressChart from '../components/ProgressChart'
+import TipCard from '../components/TipCard'
 
 interface Props {
   onStart: () => void
@@ -56,6 +57,11 @@ export default function Home({ onStart }: Props) {
       >
         開始訓練
       </button>
+
+      {/* 本關技巧（預設折疊，點開複習） */}
+      <div className="mb-6">
+        <TipCard level={currentLevel} defaultOpen={false} />
+      </div>
 
       {/* 進度圖表 */}
       <div>
