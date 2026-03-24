@@ -1,5 +1,5 @@
 export const MIN_LEVEL = 1
-export const MAX_LEVEL = 5 // MVP 上限，後續可擴展至 10
+export const MAX_LEVEL = 10
 
 /**
  * 根據最近一場訓練的成績評估難度調整。
