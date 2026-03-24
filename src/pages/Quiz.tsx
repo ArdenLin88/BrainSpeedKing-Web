@@ -17,9 +17,10 @@ export interface QuizResult {
 
 interface Props {
   onComplete: (result: QuizResult) => void
+  onExit: () => void
 }
 
-export default function Quiz({ onComplete }: Props) {
+export default function Quiz({ onComplete, onExit }: Props) {
   const level = loadData().currentLevel
 
   const [questionIdx, setQuestionIdx] = useState(0)
@@ -98,7 +99,7 @@ export default function Quiz({ onComplete }: Props) {
       setFeedback({ [selected]: 'correct' })
     } else {
       playWrong()
-      setFeedback({ [selected]: 'wrong' })
+      setFeedback({ [selected]: 'wrong', [question.answer]: 'correct' })
     }
 
     setScore(newScore)
@@ -109,19 +110,37 @@ export default function Quiz({ onComplete }: Props) {
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-6 max-w-sm mx-auto">
-      {/* 頂部：進度 + 計時器 */}
+      {/* 頂部：退出 + 進度 + 計時器 */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-[var(--text-secondary)]">
-          Q{questionIdx + 1} / {TOTAL_QUESTIONS}
-        </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => { if (window.confirm('確定要結束這次訓練嗎？')) onExit() }}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-secondary)] hover:bg-gray-200 transition-colors text-lg leading-none"
+            aria-label="退出訓練"
+          >
+            ✕
+          </button>
+          <span className="text-sm text-[var(--text-secondary)]">
+            Q{questionIdx + 1} / {TOTAL_QUESTIONS}
+          </span>
+        </div>
         <CountdownTimer seconds={secondsLeft} />
       </div>
 
-      {/* 進度條 */}
-      <div className="w-full h-1 bg-gray-100 rounded-full mb-8">
+      {/* 題目進度條 */}
+      <div className="w-full h-1 bg-gray-100 rounded-full mb-2">
         <div
           className="h-1 bg-[var(--accent)] rounded-full transition-all duration-300"
           style={{ width: `${(questionIdx / TOTAL_QUESTIONS) * 100}%` }}
+        />
+      </div>
+
+      {/* 計時進度條 */}
+      <div className="w-full h-1.5 bg-gray-100 rounded-full mb-8 overflow-hidden">
+        <div
+          key={questionIdx}
+          className="timer-bar"
+          style={{ animationDuration: `${SECONDS_PER_QUESTION}s` }}
         />
       </div>
 

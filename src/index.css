@@ -31,3 +31,18 @@ body {
   letter-spacing: -0.02em;
   line-height: 1;
 }
+
+@keyframes timer-shrink {
+  0%   { width: 100%; background-color: #22c55e; }
+  59%  { background-color: #22c55e; }
+  60%  { background-color: #f97316; }
+  79%  { background-color: #f97316; }
+  80%  { background-color: #ef4444; }
+  100% { width: 0%; background-color: #ef4444; }
+}
+
+.timer-bar {
+  height: 100%;
+  border-radius: 9999px;
+  animation: timer-shrink linear forwards;
+}

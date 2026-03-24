@@ -20,7 +20,7 @@ const STORAGE_KEY = 'bsk_data'
 
 const DEFAULT_DATA: AppData = {
   version: 1,
-  currentLevel: 3,
+  currentLevel: 1,
   streak: { count: 0, lastTrainedDate: '' },
   sessions: [],
 }

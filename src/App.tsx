@@ -26,7 +26,7 @@ export default function App() {
   const playing = musicOn || isMusicPlaying()
 
   const pageNode = (() => {
-    if (page === 'quiz') return <Quiz onComplete={handleQuizComplete} />
+    if (page === 'quiz') return <Quiz onComplete={handleQuizComplete} onExit={() => setPage('home')} />
     if (page === 'results' && lastResult) {
       return (
         <Results
