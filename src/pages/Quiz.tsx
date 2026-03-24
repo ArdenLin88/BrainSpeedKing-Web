@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { generateQuestion, type Question } from '../lib/questions'
 import { loadData } from '../lib/storage'
+import { playCorrect, playWrong, playTimeout } from '../lib/sounds'
 import CountdownTimer from '../components/CountdownTimer'
 import ChoiceButtons from '../components/ChoiceButtons'
 
@@ -89,9 +90,15 @@ export default function Quiz({ onComplete }: Props) {
     const newReactions = [...reactionTimes, reactionMs]
     const newScore = score + (isCorrect ? 1 : 0)
 
-    // 視覺回饋
-    if (selected !== null) {
-      setFeedback({ [selected]: isCorrect ? 'correct' : 'wrong' })
+    // 音效 + 視覺回饋
+    if (selected === null) {
+      playTimeout()
+    } else if (isCorrect) {
+      playCorrect()
+      setFeedback({ [selected]: 'correct' })
+    } else {
+      playWrong()
+      setFeedback({ [selected]: 'wrong' })
     }
 
     setScore(newScore)

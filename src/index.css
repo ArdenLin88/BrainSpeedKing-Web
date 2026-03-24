@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg: #ffffff;
+  --bg: #f4f5f9;
   --text-primary: #1a1a1a;
   --text-secondary: #6b7280;
   --timer-normal: #1a1a1a;
@@ -17,7 +17,9 @@
 
 body {
   margin: 0;
-  background-color: var(--bg);
+  min-height: 100dvh;
+  background: linear-gradient(160deg, #dde3f8 0%, #eceef8 30%, #f4f5f9 65%, #fdf0e8 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
