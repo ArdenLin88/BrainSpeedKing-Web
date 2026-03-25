@@ -1,5 +1,5 @@
 export const MIN_LEVEL = 1
-export const MAX_LEVEL = 20
+export const MAX_LEVEL = 22
 
 /**
  * 根據最近一場訓練的成績評估難度調整。

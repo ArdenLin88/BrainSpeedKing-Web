@@ -63,9 +63,15 @@ function genLevel3(): Question {
   }
 }
 
-/** Level 4：×11 進位 (11–99) */
+/** Level 4：×11 不用進位（b≠0 且 a+b<10，如 32×11=352） */
 function genLevel4(): Question {
-  const num = Math.floor(Math.random() * 89) + 11
+  let num: number
+  do {
+    num = Math.floor(Math.random() * 89) + 11  // 11–99
+    const a = Math.floor(num / 10)
+    const b = num % 10
+    if (b !== 0 && a + b < 10) break
+  } while (true)
   const answer = num * 11
   return {
     text: `${num} × 11`,
@@ -74,9 +80,32 @@ function genLevel4(): Question {
   }
 }
 
-/** Level 5：×9 速算 (11–99) */
+/** Level 5：×11 需進位（a+b≥10，如 75×11=825） */
 function genLevel5(): Question {
-  const num = Math.floor(Math.random() * 89) + 11
+  let num: number
+  do {
+    num = Math.floor(Math.random() * 89) + 11  // 11–99
+    const a = Math.floor(num / 10)
+    const b = num % 10
+    if (a + b >= 10) break
+  } while (true)
+  const answer = num * 11
+  return {
+    text: `${num} × 11`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 11, answer - 11, answer + 10, answer - 10]),
+  }
+}
+
+/** Level 6：×9 不需退位（個位>十位，如 59×9，減法不向百位借位） */
+function genLevel6(): Question {
+  let num: number
+  do {
+    num = Math.floor(Math.random() * 89) + 11  // 11–99
+    const a = Math.floor(num / 10)
+    const b = num % 10
+    if (b > a) break
+  } while (true)
   const answer = num * 9
   return {
     text: `${num} × 9`,
@@ -85,8 +114,25 @@ function genLevel5(): Question {
   }
 }
 
-/** Level 6：×25 速算 (2–40 偶數，÷4×100) */
-function genLevel6(): Question {
+/** Level 7：×9 需退位（個位≤十位，如 52×9，需向百位借位） */
+function genLevel7(): Question {
+  let num: number
+  do {
+    num = Math.floor(Math.random() * 89) + 11  // 11–99
+    const a = Math.floor(num / 10)
+    const b = num % 10
+    if (b <= a) break
+  } while (true)
+  const answer = num * 9
+  return {
+    text: `${num} × 9`,
+    answer,
+    choices: shuffleChoices(answer, [answer + 9, answer - 9, answer + 10, answer - 10]),
+  }
+}
+
+/** Level 8：×25 速算 (2–40 偶數，÷4×100) */
+function genLevel8(): Question {
   const num = (Math.floor(Math.random() * 20) + 1) * 2  // 2,4,6,...,40
   const answer = num * 25
   return {
@@ -96,8 +142,8 @@ function genLevel6(): Question {
   }
 }
 
-/** Level 7：11–19 的平方（(10+a)² 技巧） */
-function genLevel7(): Question {
+/** Level 9：11–19 的平方（(10+a)² 技巧） */
+function genLevel9(): Question {
   const num = Math.floor(Math.random() * 9) + 11  // 11–19
   const answer = num * num
   return {
@@ -107,8 +153,8 @@ function genLevel7(): Question {
   }
 }
 
-/** Level 8：×99 速算 (11–60，n×100−n) */
-function genLevel8(): Question {
+/** Level 10：×99 速算 (11–60，n×100−n) */
+function genLevel10(): Question {
   const num = Math.floor(Math.random() * 50) + 11
   const answer = num * 99
   return {
@@ -118,8 +164,8 @@ function genLevel8(): Question {
   }
 }
 
-/** Level 9：個位互補乘法（如 23×27，十位相同且個位和=10） */
-function genLevel9(): Question {
+/** Level 11：個位互補乘法（如 23×27，十位相同且個位和=10） */
+function genLevel11(): Question {
   const tens = Math.floor(Math.random() * 8) + 1    // 1–8（十位）
   const b = Math.floor(Math.random() * 4) + 1       // 個位 1–4（互補後 6–9，避免 b=5 兩數相同）
   const c = 10 - b
@@ -133,8 +179,8 @@ function genLevel9(): Question {
   }
 }
 
-/** Level 10：兩位數×兩位數 完全隨機 (11–30 × 11–30) */
-function genLevel10(): Question {
+/** Level 12：兩位數×兩位數 完全隨機 (11–30 × 11–30) */
+function genLevel12(): Question {
   const a = Math.floor(Math.random() * 20) + 11
   const b = Math.floor(Math.random() * 20) + 11
   const answer = a * b
@@ -145,8 +191,8 @@ function genLevel10(): Question {
   }
 }
 
-/** Level 11：兩位數 × 個位數（分拆法，11–50 × 2–9）*/
-function genLevel11(): Question {
+/** Level 13：兩位數 × 個位數（分拆法，11–50 × 2–9）*/
+function genLevel13(): Question {
   const a = Math.floor(Math.random() * 40) + 11
   const b = Math.floor(Math.random() * 8) + 2
   const answer = a * b
@@ -157,8 +203,8 @@ function genLevel11(): Question {
   }
 }
 
-/** Level 12：末位 5 的數平方（n5² = n×(n+1)×100 + 25）*/
-function genLevel12(): Question {
+/** Level 14：末位 5 的數平方（n5² = n×(n+1)×100 + 25）*/
+function genLevel14(): Question {
   const n = Math.floor(Math.random() * 8) + 1  // 1–8 → 15,25,...,85
   const num = n * 10 + 5
   const answer = num * num
@@ -169,8 +215,8 @@ function genLevel12(): Question {
   }
 }
 
-/** Level 13：偶數 × 5 速算（n÷2×10）*/
-function genLevel13(): Question {
+/** Level 15：偶數 × 5 速算（n÷2×10）*/
+function genLevel15(): Question {
   const n = (Math.floor(Math.random() * 44) + 6) * 2  // 12,14,...,100
   const answer = n * 5
   return {
@@ -180,8 +226,8 @@ function genLevel13(): Question {
   }
 }
 
-/** Level 14：5 的倍數 ÷ 5 速算（n×2÷10）*/
-function genLevel14(): Question {
+/** Level 16：5 的倍數 ÷ 5 速算（n×2÷10）*/
+function genLevel16(): Question {
   const result = Math.floor(Math.random() * 38) + 3  // 答案 3–40
   const num = result * 5
   return {
@@ -191,8 +237,8 @@ function genLevel14(): Question {
   }
 }
 
-/** Level 15：兩位數加法（必進位）*/
-function genLevel15(): Question {
+/** Level 17：兩位數加法（必進位）*/
+function genLevel17(): Question {
   let a: number, b: number
   do {
     a = Math.floor(Math.random() * 61) + 15
@@ -206,8 +252,8 @@ function genLevel15(): Question {
   }
 }
 
-/** Level 16：兩位數減法（必借位）*/
-function genLevel16(): Question {
+/** Level 18：兩位數減法（必借位）*/
+function genLevel18(): Question {
   let a: number, b: number
   do {
     a = Math.floor(Math.random() * 50) + 50  // 50–99
@@ -221,8 +267,8 @@ function genLevel16(): Question {
   }
 }
 
-/** Level 17：×15 速算（n×10 + n×5，偶數）*/
-function genLevel17(): Question {
+/** Level 19：×15 速算（n×10 + n×5，偶數）*/
+function genLevel19(): Question {
   const n = (Math.floor(Math.random() * 18) + 2) * 2  // 4,6,...,40
   const answer = n * 15
   return {
@@ -232,8 +278,8 @@ function genLevel17(): Question {
   }
 }
 
-/** Level 18：×125 速算（n÷8×1000，8 的倍數）*/
-function genLevel18(): Question {
+/** Level 20：×125 速算（n÷8×1000，8 的倍數）*/
+function genLevel20(): Question {
   const k = Math.floor(Math.random() * 10) + 1  // 1–10
   const n = k * 8
   const answer = n * 125
@@ -244,8 +290,8 @@ function genLevel18(): Question {
   }
 }
 
-/** Level 19：近百乘法（91–99 × 91–99，補數法）*/
-function genLevel19(): Question {
+/** Level 21：近百乘法（91–99 × 91–99，補數法）*/
+function genLevel21(): Question {
   const a = Math.floor(Math.random() * 9) + 91
   const b = Math.floor(Math.random() * 9) + 91
   const da = 100 - a
@@ -258,8 +304,8 @@ function genLevel19(): Question {
   }
 }
 
-/** Level 20：兩位數×兩位數（大範圍，31–60 × 31–60）*/
-function genLevel20(): Question {
+/** Level 22：兩位數×兩位數（大範圍，31–60 × 31–60）*/
+function genLevel22(): Question {
   const a = Math.floor(Math.random() * 30) + 31
   const b = Math.floor(Math.random() * 30) + 31
   const answer = a * b
@@ -291,9 +337,11 @@ const generators: Record<number, () => Question> = {
   18: genLevel18,
   19: genLevel19,
   20: genLevel20,
+  21: genLevel21,
+  22: genLevel22,
 }
 
 export function generateQuestion(level: number): Question {
-  const gen = generators[Math.min(Math.max(level, 1), 20)]
+  const gen = generators[Math.min(Math.max(level, 1), 22)]
   return gen()
 }

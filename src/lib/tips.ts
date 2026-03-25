@@ -37,25 +37,44 @@ export const levelTips: Record<number, LevelTip> = {
     example: '30 × 11 → 30 × 10 + 30 = 300 + 30 = 330',
   },
   4: {
-    title: '×11 進位法（兩位數）',
-    formula: 'ab × 11 = a | (a+b) | b',
+    title: '×11 不用進位',
+    formula: 'AB × 11 = A (A+B) B',
     steps: [
-      '把兩位數的十位和個位分別記為 a、b',
-      '結果三位數：百位=a，十位=a+b，個位=b',
-      '若 a+b ≥ 10，向百位進一位',
+      '確認個位和十位都不為 0，且兩數字相加 < 10',
+      '百位 = 十位數，個位 = 個位數，中間插入兩者之和',
     ],
-    example: '57 × 11 → 5 | (5+7) | 7 → 5 | 12 | 7 → 627',
+    example: '32 × 11 → 3 | (3+2) | 2 = 352',
   },
   5: {
-    title: '×9 速算（近十法）',
-    formula: 'n × 9 = n × 10 − n',
+    title: '×11 需進位',
+    formula: 'AB × 11 = (A+1) | (A+B個位) | B',
     steps: [
-      '先算 n × 10（直接加個零）',
-      '再減去 n 本身',
+      '兩數字相加 ≥ 10 時，中間取個位，向左進一位',
+      '百位 = 十位+1，十位 = (十位+個位)的個位，個位不變',
     ],
-    example: '36 × 9 → 36 × 10 = 360 → 360 − 36 = 324',
+    example: '75 × 11 → (7+1) | (7+5=12取2) | 5 = 825',
   },
   6: {
+    title: '×9 不需退位',
+    formula: 'n × 9 = n × 10 − n',
+    steps: [
+      '條件：個位數 > 十位數（如 59：9 > 5）',
+      '先算 n × 10（直接加個零）',
+      '直接減去 n，不需向百位借位',
+    ],
+    example: '59 × 9 → 590 − 59 = 531',
+  },
+  7: {
+    title: '×9 需退位',
+    formula: 'n × 9 = (n×10 − 100) + (100 − n)',
+    steps: [
+      '條件：個位數 ≤ 十位數（如 52：2 ≤ 5）',
+      '先算 n×10，再減 100，得到前半部分',
+      '再算 100−n，兩者相加',
+    ],
+    example: '52 × 9 → (520−100) + (100−52) = 420 + 48 = 468',
+  },
+  8: {
     title: '×25 速算（÷4×100）',
     formula: 'n × 25 = n ÷ 4 × 100',
     steps: [
@@ -65,7 +84,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '28 × 25 → 28 ÷ 4 = 7 → 7 × 100 = 700',
   },
-  7: {
+  9: {
     title: '11–19 平方速算',
     formula: '(10+a)² = 100 + 20a + a²',
     steps: [
@@ -75,7 +94,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '14² → 100 + 20×4 + 4² = 100 + 80 + 16 = 196',
   },
-  8: {
+  10: {
     title: '×99 速算（近百法）',
     formula: 'n × 99 = n × 100 − n',
     steps: [
@@ -84,7 +103,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '43 × 99 → 43 × 100 = 4300 → 4300 − 43 = 4257',
   },
-  9: {
+  11: {
     title: '個位互補乘法',
     formula: 'ab × ac = a(a+1)×100 + b×c　（b+c=10）',
     steps: [
@@ -94,7 +113,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '23 × 27 → 2×3×100 + 3×7 = 600 + 21 = 621',
   },
-  10: {
+  12: {
     title: '兩位數完全乘法（分解法）',
     formula: 'ab × cd = (a×c)×100 + (a×d + b×c)×10 + b×d',
     steps: [
@@ -104,7 +123,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '24 × 17 → 2×1×100 + (2×7+4×1)×10 + 4×7 = 200 + 180 + 28 = 408',
   },
-  11: {
+  13: {
     title: '兩位數 × 個位數（分拆法）',
     formula: '(a×10 + b) × c = a×c×10 + b×c',
     steps: [
@@ -114,7 +133,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '34 × 7 → 30×7 + 4×7 = 210 + 28 = 238',
   },
-  12: {
+  14: {
     title: '末位 5 的數平方',
     formula: 'n5² = n×(n+1)×100 + 25',
     steps: [
@@ -124,7 +143,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '35² → n=3 → 3×4=12 → 1200 + 25 = 1225',
   },
-  13: {
+  15: {
     title: '偶數 × 5 速算',
     formula: 'n × 5 = (n ÷ 2) × 10',
     steps: [
@@ -134,7 +153,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '46 × 5 → 46÷2 = 23 → 末尾加 0 = 230',
   },
-  14: {
+  16: {
     title: '÷5 速算',
     formula: 'n ÷ 5 = (n × 2) ÷ 10',
     steps: [
@@ -143,7 +162,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '85 ÷ 5 → 85×2 = 170 → ÷10 = 17',
   },
-  15: {
+  17: {
     title: '兩位數加法（進位）',
     formula: '拆右數湊整十，再加剩餘',
     steps: [
@@ -153,7 +172,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '47 + 38 → 47+3=50 → 50+35 = 85',
   },
-  16: {
+  18: {
     title: '兩位數減法（借位）',
     formula: '減整十，再處理個位差',
     steps: [
@@ -163,7 +182,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '83 − 47 → 83−40=43 → 43−7 = 36',
   },
-  17: {
+  19: {
     title: '×15 速算',
     formula: 'n × 15 = n × 10 + n × 5',
     steps: [
@@ -173,7 +192,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '24 × 15 → 240 + 120 = 360',
   },
-  18: {
+  20: {
     title: '×125 速算（÷8×1000）',
     formula: 'n × 125 = (n ÷ 8) × 1000',
     steps: [
@@ -183,7 +202,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '24 × 125 → 24÷8=3 → 3000',
   },
-  19: {
+  21: {
     title: '近百乘法（補數法）',
     formula: 'a×b：前兩位 = a−(100−b)，後兩位 = (100−a)×(100−b)',
     steps: [
@@ -193,7 +212,7 @@ export const levelTips: Record<number, LevelTip> = {
     ],
     example: '93 × 96 → 補數 7,4 → 89|28 = 8928',
   },
-  20: {
+  22: {
     title: '兩位數乘法（大數分解）',
     formula: '同分解法，適用 31–60 大數範圍',
     steps: [
