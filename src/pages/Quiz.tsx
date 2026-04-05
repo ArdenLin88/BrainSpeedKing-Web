@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { generateQuestion, type Question } from '../lib/questions'
 import { loadData } from '../lib/storage'
 import { playCorrect, playWrong, playTimeout } from '../lib/sounds'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../lib/i18n'
 import CountdownTimer from '../components/CountdownTimer'
 import ChoiceButtons from '../components/ChoiceButtons'
 
@@ -22,6 +24,8 @@ interface Props {
 
 export default function Quiz({ onComplete, onExit }: Props) {
   const level = loadData().currentLevel
+  const { lang } = useLanguage()
+  const tr = t[lang]
 
   const [questionIdx, setQuestionIdx] = useState(0)
   const [question, setQuestion] = useState<Question>(() => generateQuestion(level))
@@ -114,9 +118,9 @@ export default function Quiz({ onComplete, onExit }: Props) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => { if (window.confirm('確定要結束這次訓練嗎？')) onExit() }}
+            onClick={() => { if (window.confirm(tr.quitConfirm)) onExit() }}
             className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-secondary)] hover:bg-gray-200 transition-colors text-lg leading-none"
-            aria-label="退出訓練"
+            aria-label={tr.quitLabel}
           >
             ✕
           </button>
@@ -124,7 +128,7 @@ export default function Quiz({ onComplete, onExit }: Props) {
             Lv.{level}
           </span>
           <span className="text-sm text-[var(--text-secondary)]">
-            Q{questionIdx + 1} / {TOTAL_QUESTIONS}
+            {tr.questionOf(questionIdx + 1, TOTAL_QUESTIONS)}
           </span>
         </div>
         <CountdownTimer seconds={secondsLeft} />

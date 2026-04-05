@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { evaluateLevel } from '../lib/adaptive'
 import { loadData, appendSession, updateLevel, saveData } from '../lib/storage'
 import { calculateStreak } from '../lib/streak'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../lib/i18n'
 import ProgressChart from '../components/ProgressChart'
 import TipCard from '../components/TipCard'
 import type { QuizResult } from './Quiz'
@@ -15,6 +17,8 @@ interface Props {
 export default function Results({ result, onRestart, onHome }: Props) {
   const { score, reactionTimes, level } = result
   const totalQuestions = 10
+  const { lang } = useLanguage()
+  const tr = t[lang]
 
   // 計算平均反應時間（排除超時的 0）
   const validTimes = reactionTimes.filter(t => t > 0)
@@ -54,7 +58,7 @@ export default function Results({ result, onRestart, onHome }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-8 max-w-sm mx-auto">
       <p className="text-xs text-[var(--text-secondary)] tracking-widest uppercase mb-6">
-        本場結果
+        {tr.resultsTitle}
       </p>
 
       {/* 分數 */}
@@ -67,9 +71,9 @@ export default function Results({ result, onRestart, onHome }: Props) {
         </span>
       </div>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
-        正確率 {accuracy}%
+        {tr.accuracy(accuracy)}
         {avgReactionMs != null && (
-          <> &nbsp;·&nbsp; 平均反應 {(avgReactionMs / 1000).toFixed(2)}s</>
+          <> &nbsp;·&nbsp; {tr.avgReaction((avgReactionMs / 1000).toFixed(2))}</>
         )}
       </p>
 
@@ -84,8 +88,7 @@ export default function Results({ result, onRestart, onHome }: Props) {
         >
           <span className="text-xl">{changed === 'up' ? '🎉' : '💪'}</span>
           <span className="font-semibold">
-            Level {level} → Level {newLevel}
-            {changed === 'up' ? '　難度提升！' : '　繼續練習！'}
+            {changed === 'up' ? tr.levelUp(level, newLevel) : tr.levelDown(level, newLevel)}
           </span>
         </div>
       )}
@@ -97,7 +100,7 @@ export default function Results({ result, onRestart, onHome }: Props) {
 
       {/* 進度圖表 */}
       <div className="mb-8">
-        <p className="text-xs text-[var(--text-secondary)] mb-2">最近進度</p>
+        <p className="text-xs text-[var(--text-secondary)] mb-2">{tr.recentProgress}</p>
         <ProgressChart sessions={sessions} />
       </div>
 
@@ -108,14 +111,14 @@ export default function Results({ result, onRestart, onHome }: Props) {
           className="flex-1 h-14 bg-[var(--text-primary)] text-white text-base font-semibold
                      rounded-xl hover:bg-gray-800 transition-colors"
         >
-          再練一次
+          {tr.tryAgain}
         </button>
         <button
           onClick={onHome}
           className="flex-1 h-14 border-2 border-[var(--accent)] text-[var(--text-primary)]
                      text-base font-semibold rounded-xl hover:bg-gray-50 transition-colors"
         >
-          首頁
+          {tr.home}
         </button>
       </div>
     </div>
