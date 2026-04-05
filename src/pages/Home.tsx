@@ -14,6 +14,7 @@ interface Props {
 const TOTAL_LEVELS = 22
 
 export default function Home({ onStart, onPractice, onLevelMap }: Props) {
+  const { toggle: toggleLang } = useLanguage()
   const data = loadData()
   const { streak, currentLevel, sessions, unlockedAchievements = [], levelBests = {} } = data
   const currentBest = levelBests[currentLevel] ?? null
@@ -22,22 +23,34 @@ export default function Home({ onStart, onPractice, onLevelMap }: Props) {
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-8 max-w-sm mx-auto">
-      {/* 品牌名 + 關卡地圖按鈕 */}
+      {/* 品牌名 + 語系 + 關卡地圖按鈕 */}
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
           {tr.brand}
         </p>
-        <button
-          onClick={onLevelMap}
-          title={lang === 'zh' ? '關卡地圖' : 'Level Map'}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full
-                     bg-indigo-50 border border-indigo-100
-                     text-indigo-600 text-xs font-semibold
-                     hover:bg-indigo-100 transition-colors"
-        >
-          <span>🗺️</span>
-          <span>{tr.levelMapBtn(currentLevel, TOTAL_LEVELS)}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* 語系切換 */}
+          <button
+            onClick={toggleLang}
+            className="w-9 h-9 rounded-full bg-white border border-gray-200
+                       shadow-sm flex items-center justify-center
+                       text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {tr.langToggle}
+          </button>
+          {/* 關卡地圖 */}
+          <button
+            onClick={onLevelMap}
+            title={lang === 'zh' ? '關卡地圖' : 'Level Map'}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                       bg-indigo-50 border border-indigo-100
+                       text-indigo-600 text-xs font-semibold
+                       hover:bg-indigo-100 transition-colors"
+          >
+            <span>🗺️</span>
+            <span>{tr.levelMapBtn(currentLevel, TOTAL_LEVELS)}</span>
+          </button>
+        </div>
       </div>
 
       {/* Streak 橫幅 */}

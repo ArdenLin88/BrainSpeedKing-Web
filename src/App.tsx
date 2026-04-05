@@ -16,7 +16,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('home')
   const [lastResult, setLastResult] = useState<QuizResult | null>(null)
   const [musicOn, setMusicOn] = useState(false)
-  const { lang, toggle: toggleLang } = useLanguage()
+  const { lang } = useLanguage()
   const tr = t[lang]
 
   function handleQuizComplete(result: QuizResult) {
@@ -64,29 +64,17 @@ export default function App() {
     <>
       {pageNode}
 
-      {/* 右上角固定按鈕群 */}
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        {/* 語系切換 */}
-        <button
-          onClick={toggleLang}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur border border-gray-200
-                     shadow-sm flex items-center justify-center
-                     text-xs font-bold text-gray-600 hover:bg-white transition-colors"
-        >
-          {tr.langToggle}
-        </button>
-
-        {/* 音樂 */}
-        <button
-          onClick={handleMusicToggle}
-          title={playing ? tr.musicPause : tr.musicPlay}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur border border-gray-200
-                     shadow-sm flex items-center justify-center
-                     text-lg hover:bg-white transition-colors"
-        >
-          {playing ? '🔊' : '🔇'}
-        </button>
-      </div>
+      {/* 音樂按鈕 — 左下角固定 */}
+      <button
+        onClick={handleMusicToggle}
+        title={playing ? tr.musicPause : tr.musicPlay}
+        className="fixed bottom-6 left-4 z-50 w-10 h-10 rounded-full
+                   bg-white/80 backdrop-blur border border-gray-200
+                   shadow-sm flex items-center justify-center
+                   text-lg hover:bg-white transition-colors"
+      >
+        {playing ? '🔊' : '🔇'}
+      </button>
     </>
   )
 }
