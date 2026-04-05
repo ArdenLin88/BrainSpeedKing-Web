@@ -42,8 +42,8 @@ export default function Home({ onStart, onLevelMap }: Props) {
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-8 max-w-sm mx-auto">
       {/* 品牌名 + 關卡地圖按鈕 */}
       <div className="flex items-center justify-between mb-6">
-        <p className="text-xs text-[var(--text-secondary)] tracking-widest uppercase">
-          BrainSpeedKing
+        <p className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
+          腦速王
         </p>
         <button
           onClick={onLevelMap}
