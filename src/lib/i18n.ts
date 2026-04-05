@@ -94,6 +94,15 @@ export const t = {
     musicPause: '暫停音樂',
     musicPlay: '播放背景音樂',
 
+    // 練習模式
+    practiceMode: '練習模式',
+    practiceSubtitle: '無計時・慢慢來',
+    nextQuestion: '下一題',
+    finishPractice: '結束練習',
+    practiceCorrect: '答對了！',
+    practiceWrong: (ans: number) => `正確答案是 ${ans}`,
+    practiceCount: (n: number) => `第 ${n} 題`,
+
     // 錯題回顧
     wrongReviewTitle: '錯題回顧',
     wrongReviewEmpty: '全部答對！',
@@ -142,6 +151,15 @@ export const t = {
     // Music
     musicPause: 'Pause Music',
     musicPlay: 'Play Music',
+
+    // Practice mode
+    practiceMode: 'Practice',
+    practiceSubtitle: 'No timer · Go at your pace',
+    nextQuestion: 'Next',
+    finishPractice: 'Finish',
+    practiceCorrect: 'Correct!',
+    practiceWrong: (ans: number) => `Answer: ${ans}`,
+    practiceCount: (n: number) => `Question ${n}`,
 
     // Wrong answer review
     wrongReviewTitle: 'Mistakes',

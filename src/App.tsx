@@ -3,13 +3,14 @@ import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Results from './pages/Results'
 import LevelMap from './pages/LevelMap'
+import Practice from './pages/Practice'
 import { toggleMusic, isMusicPlaying } from './lib/bgMusic'
 import { loadData, updateLevel } from './lib/storage'
 import { useLanguage } from './contexts/LanguageContext'
 import { t } from './lib/i18n'
 import type { QuizResult } from './pages/Quiz'
 
-type Page = 'home' | 'quiz' | 'results' | 'levelmap'
+type Page = 'home' | 'quiz' | 'results' | 'levelmap' | 'practice'
 
 export default function App() {
   const [page, setPage] = useState<Page>('home')
@@ -55,7 +56,8 @@ export default function App() {
         />
       )
     }
-    return <Home onStart={() => setPage('quiz')} onLevelMap={() => setPage('levelmap')} />
+    if (page === 'practice') return <Practice onExit={() => setPage('home')} />
+    return <Home onStart={() => setPage('quiz')} onPractice={() => setPage('practice')} onLevelMap={() => setPage('levelmap')} />
   })()
 
   return (

@@ -6,12 +6,13 @@ import TipCard from '../components/TipCard'
 
 interface Props {
   onStart: () => void
+  onPractice: () => void
   onLevelMap: () => void
 }
 
 const TOTAL_LEVELS = 22
 
-export default function Home({ onStart, onLevelMap }: Props) {
+export default function Home({ onStart, onPractice, onLevelMap }: Props) {
   const data = loadData()
   const { streak, currentLevel, sessions } = data
   const { lang } = useLanguage()
@@ -60,14 +61,26 @@ export default function Home({ onStart, onLevelMap }: Props) {
         </p>
       </div>
 
-      {/* 開始按鈕 */}
-      <button
-        onClick={onStart}
-        className="w-full h-14 bg-[var(--text-primary)] text-white text-lg font-semibold rounded-xl
-                   hover:bg-gray-800 active:bg-gray-900 transition-colors mb-8"
-      >
-        {tr.startTraining}
-      </button>
+      {/* 按鈕群 */}
+      <div className="flex gap-3 mb-8">
+        <button
+          onClick={onStart}
+          className="flex-1 h-14 bg-[var(--text-primary)] text-white text-lg font-semibold rounded-xl
+                     hover:bg-gray-800 active:bg-gray-900 transition-colors"
+        >
+          {tr.startTraining}
+        </button>
+        <button
+          onClick={onPractice}
+          title={tr.practiceSubtitle}
+          className="h-14 px-4 border-2 border-gray-200 text-[var(--text-secondary)] text-sm
+                     font-semibold rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors
+                     flex flex-col items-center justify-center leading-tight"
+        >
+          <span className="text-base">📖</span>
+          <span>{tr.practiceMode}</span>
+        </button>
+      </div>
 
       {/* 本關技巧 */}
       <div className="mb-6">
