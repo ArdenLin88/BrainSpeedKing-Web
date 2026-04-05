@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { levelTips } from '../lib/tips'
 import { levelTipsEn } from '../lib/tips_en'
+import { loadData } from '../lib/storage'
 import { useLanguage } from '../contexts/LanguageContext'
 import { t, levelNames } from '../lib/i18n'
 
@@ -17,6 +18,7 @@ export default function LevelMap({ currentLevel, onBack, onSelectLevel }: Props)
   const { lang } = useLanguage()
   const tr = t[lang]
   const tips = lang === 'zh' ? levelTips : levelTipsEn
+  const levelStars = loadData().levelStars
 
   function handleLevelClick(level: number) {
     if (level <= currentLevel) {
@@ -98,6 +100,24 @@ export default function LevelMap({ currentLevel, onBack, onSelectLevel }: Props)
                 >
                   {levelNames[lang][level]}
                 </span>
+
+                {/* 星星（只有解鎖過的關卡才顯示） */}
+                {unlocked && (
+                  <div className="flex gap-0.5 mt-1">
+                    {[1, 2, 3].map(s => (
+                      <span
+                        key={s}
+                        className={`text-[10px] leading-none ${
+                          s <= (levelStars[level] ?? 0)
+                            ? isCurrent ? 'text-amber-200' : 'text-amber-400'
+                            : isCurrent ? 'text-indigo-300/50' : 'text-gray-200'
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                )}
               </button>
             )
           })}

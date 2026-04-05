@@ -94,6 +94,12 @@ export const t = {
     musicPause: '暫停音樂',
     musicPlay: '播放背景音樂',
 
+    // 星級評分
+    starsEarned: (n: number) => n > 0 ? `本場獲得 ${'★'.repeat(n)}` : '本場未得星',
+    starsPB: '最佳紀錄更新！',
+    starsHint2: '正確率達 80% 可得 2 顆星',
+    starsHint3: '全對且反應 ≤ 2 秒可得 3 顆星',
+
     // 練習模式
     practiceMode: '練習模式',
     practiceSubtitle: '無計時・慢慢來',
@@ -151,6 +157,12 @@ export const t = {
     // Music
     musicPause: 'Pause Music',
     musicPlay: 'Play Music',
+
+    // Stars
+    starsEarned: (n: number) => n > 0 ? `You earned ${'★'.repeat(n)}` : 'No stars this round',
+    starsPB: 'New personal best!',
+    starsHint2: 'Get 80%+ accuracy for 2 stars',
+    starsHint3: 'Perfect score + avg ≤ 2s for 3 stars',
 
     // Practice mode
     practiceMode: 'Practice',

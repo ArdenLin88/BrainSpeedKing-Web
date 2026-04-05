@@ -14,6 +14,7 @@ export interface AppData {
     lastTrainedDate: string  // YYYY-MM-DD
   }
   sessions: SessionRecord[]
+  levelStars: Record<number, number>  // best star rating per level (0–3)
 }
 
 const STORAGE_KEY = 'bsk_data'
@@ -23,6 +24,7 @@ const DEFAULT_DATA: AppData = {
   currentLevel: 1,
   streak: { count: 0, lastTrainedDate: '' },
   sessions: [],
+  levelStars: {},
 }
 
 export function loadData(): AppData {
@@ -32,6 +34,8 @@ export function loadData(): AppData {
     const parsed = JSON.parse(raw) as AppData
     // 版本遷移占位（未來擴充用）
     if (!parsed.version) return { ...DEFAULT_DATA }
+    // 補上舊資料可能缺少的欄位
+    if (!parsed.levelStars) parsed.levelStars = {}
     return parsed
   } catch {
     // localStorage 損毀：靜默重置，不崩潰
@@ -58,4 +62,13 @@ export function updateLevel(newLevel: number): void {
   const data = loadData()
   data.currentLevel = newLevel
   saveData(data)
+}
+
+export function updateLevelStars(level: number, stars: number): boolean {
+  const data = loadData()
+  const prev = data.levelStars[level] ?? 0
+  if (stars <= prev) return false  // 沒有破紀錄
+  data.levelStars[level] = stars
+  saveData(data)
+  return true  // 破紀錄了
 }

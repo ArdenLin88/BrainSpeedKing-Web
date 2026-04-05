@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { evaluateLevel } from '../lib/adaptive'
-import { loadData, appendSession, updateLevel, saveData } from '../lib/storage'
+import { loadData, appendSession, updateLevel, saveData, updateLevelStars } from '../lib/storage'
 import { calculateStreak } from '../lib/streak'
+import { calcStars } from '../lib/stars'
 import { useLanguage } from '../contexts/LanguageContext'
 import { t } from '../lib/i18n'
 import ProgressChart from '../components/ProgressChart'
@@ -27,8 +28,10 @@ export default function Results({ result, onRestart, onHome }: Props) {
     : null
 
   const { newLevel, changed } = evaluateLevel(level, score, totalQuestions)
+  const stars = calcStars(score, totalQuestions, avgReactionMs)
 
   const [sessions, setSessions] = useState(loadData().sessions)
+  const [isPB, setIsPB] = useState(false)
 
   useEffect(() => {
     // 儲存本場結果 + 更新 streak + 更新等級
@@ -51,6 +54,10 @@ export default function Results({ result, onRestart, onHome }: Props) {
     // 直接 saveData 完整更新
     saveData(updated)
     setSessions(updated.sessions)
+
+    // 更新星數（只在有進步時回傳 true）
+    const gotPB = updateLevelStars(level, stars)
+    setIsPB(gotPB)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const accuracy = Math.round((score / totalQuestions) * 100)
@@ -70,12 +77,38 @@ export default function Results({ result, onRestart, onHome }: Props) {
           &nbsp;/ {totalQuestions}
         </span>
       </div>
-      <p className="text-sm text-[var(--text-secondary)] mb-6">
+      <p className="text-sm text-[var(--text-secondary)] mb-4">
         {tr.accuracy(accuracy)}
         {avgReactionMs != null && (
           <> &nbsp;·&nbsp; {tr.avgReaction((avgReactionMs / 1000).toFixed(2))}</>
         )}
       </p>
+
+      {/* 星級 */}
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex gap-1">
+          {[1, 2, 3].map(s => (
+            <span
+              key={s}
+              className={`text-3xl transition-all ${s <= stars ? 'text-amber-400' : 'text-gray-200'}`}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+        <div className="text-sm">
+          <p className="font-semibold text-[var(--text-primary)]">{tr.starsEarned(stars)}</p>
+          {isPB && stars > 0 && (
+            <p className="text-amber-500 text-xs font-bold">{tr.starsPB}</p>
+          )}
+          {stars < 2 && (
+            <p className="text-[var(--text-secondary)] text-xs">{tr.starsHint2}</p>
+          )}
+          {stars === 2 && (
+            <p className="text-[var(--text-secondary)] text-xs">{tr.starsHint3}</p>
+          )}
+        </div>
+      </div>
 
       {/* 升降級通知 */}
       {changed !== 'same' && (
