@@ -93,6 +93,13 @@ export const t = {
     // Music
     musicPause: '暫停音樂',
     musicPlay: '播放背景音樂',
+
+    // 錯題回顧
+    wrongReviewTitle: '錯題回顧',
+    wrongReviewEmpty: '全部答對！',
+    wrongTimeout: '⏰ 超時',
+    wrongYourAnswer: '你的答案',
+    wrongCorrect: '正確答案',
   },
   en: {
     brand: 'BrainSpeedKing',
@@ -135,5 +142,12 @@ export const t = {
     // Music
     musicPause: 'Pause Music',
     musicPlay: 'Play Music',
+
+    // Wrong answer review
+    wrongReviewTitle: 'Mistakes',
+    wrongReviewEmpty: 'Perfect round!',
+    wrongTimeout: '⏰ Timeout',
+    wrongYourAnswer: 'Your answer',
+    wrongCorrect: 'Correct',
   },
 } as const

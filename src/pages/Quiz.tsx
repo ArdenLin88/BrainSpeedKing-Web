@@ -11,10 +11,17 @@ const TOTAL_QUESTIONS = 10
 const SECONDS_PER_QUESTION = 5
 const FEEDBACK_DURATION_MS = 800
 
+export interface WrongQuestion {
+  text: string
+  answer: number
+  chosen: number | null  // null = timeout
+}
+
 export interface QuizResult {
   score: number
   reactionTimes: number[]  // ms per question (null-safe as 0 for timeout)
   level: number
+  wrongQuestions: WrongQuestion[]
 }
 
 interface Props {
@@ -34,16 +41,17 @@ export default function Quiz({ onComplete, onExit }: Props) {
   const [disabled, setDisabled] = useState(false)
   const [score, setScore] = useState(0)
   const [reactionTimes, setReactionTimes] = useState<number[]>([])
+  const [wrongQuestions, setWrongQuestions] = useState<WrongQuestion[]>([])
 
   const questionStartRef = useRef<number>(performance.now())
   const answeredRef = useRef(false)
 
   // 進入下一題
   const nextQuestion = useCallback(
-    (newScore: number, newReactions: number[]) => {
+    (newScore: number, newReactions: number[], newWrong: WrongQuestion[]) => {
       const next = questionIdx + 1
       if (next >= TOTAL_QUESTIONS) {
-        onComplete({ score: newScore, reactionTimes: newReactions, level })
+        onComplete({ score: newScore, reactionTimes: newReactions, level, wrongQuestions: newWrong })
         return
       }
       setQuestion(generateQuestion(level))
@@ -94,6 +102,9 @@ export default function Quiz({ onComplete, onExit }: Props) {
     const isCorrect = selected === question.answer
     const newReactions = [...reactionTimes, reactionMs]
     const newScore = score + (isCorrect ? 1 : 0)
+    const newWrong = isCorrect
+      ? wrongQuestions
+      : [...wrongQuestions, { text: question.text, answer: question.answer, chosen: selected }]
 
     // 音效 + 視覺回饋
     if (selected === null) {
@@ -108,8 +119,9 @@ export default function Quiz({ onComplete, onExit }: Props) {
 
     setScore(newScore)
     setReactionTimes(newReactions)
+    setWrongQuestions(newWrong)
 
-    setTimeout(() => nextQuestion(newScore, newReactions), FEEDBACK_DURATION_MS)
+    setTimeout(() => nextQuestion(newScore, newReactions, newWrong), FEEDBACK_DURATION_MS)
   }
 
   return (

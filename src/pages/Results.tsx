@@ -6,7 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { t } from '../lib/i18n'
 import ProgressChart from '../components/ProgressChart'
 import TipCard from '../components/TipCard'
-import type { QuizResult } from './Quiz'
+import type { QuizResult, WrongQuestion } from './Quiz'
 
 interface Props {
   result: QuizResult
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Results({ result, onRestart, onHome }: Props) {
-  const { score, reactionTimes, level } = result
+  const { score, reactionTimes, level, wrongQuestions } = result
   const totalQuestions = 10
   const { lang } = useLanguage()
   const tr = t[lang]
@@ -93,9 +93,35 @@ export default function Results({ result, onRestart, onHome }: Props) {
         </div>
       )}
 
-      {/* 本關技巧（預設展開，讓玩家學習） */}
+      {/* 錯題回顧 */}
       <div className="mb-6">
-        <TipCard level={level} defaultOpen={true} />
+        <p className="text-xs text-[var(--text-secondary)] mb-2">{tr.wrongReviewTitle}</p>
+        {wrongQuestions.length === 0 ? (
+          <div className="px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-semibold flex items-center gap-2">
+            <span>🎉</span> {tr.wrongReviewEmpty}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {wrongQuestions.map((q: WrongQuestion, i: number) => (
+              <div key={i} className="rounded-xl border border-red-100 bg-red-50/60 px-4 py-3">
+                <p className="text-base font-bold text-gray-800 mb-2 font-mono">{q.text} = ?</p>
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="text-red-500">
+                    ✗ {q.chosen === null ? tr.wrongTimeout : q.chosen}
+                  </span>
+                  <span className="text-green-600 font-semibold">
+                    ✓ {q.answer}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 本關技巧（有錯題才預設展開） */}
+      <div className="mb-6">
+        <TipCard level={level} defaultOpen={wrongQuestions.length > 0} />
       </div>
 
       {/* 進度圖表 */}
