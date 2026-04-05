@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { evaluateLevel } from '../lib/adaptive'
 import { loadData, appendSession, updateLevel, saveData, updateLevelStars, updateLevelBests, unlockAchievements } from '../lib/storage'
 import type { PBResult } from '../lib/storage'
@@ -6,7 +6,7 @@ import { calculateStreak } from '../lib/streak'
 import { calcStars } from '../lib/stars'
 import { ACHIEVEMENTS, checkNewAchievements } from '../lib/achievements'
 import { useLanguage } from '../contexts/LanguageContext'
-import { t } from '../lib/i18n'
+import { t, levelNames } from '../lib/i18n'
 import ProgressChart from '../components/ProgressChart'
 import TipCard from '../components/TipCard'
 import type { QuizResult, WrongQuestion } from './Quiz'
@@ -34,6 +34,7 @@ export default function Results({ result, onRestart, onHome }: Props) {
 
   const [sessions, setSessions] = useState(loadData().sessions)
   const [isPB, setIsPB] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [pbResult, setPbResult] = useState<PBResult | null>(null)
   const [bestAfter, setBestAfter] = useState<{ score: number; avgReactionMs: number | null } | null>(null)
   const [newAchievements, setNewAchievements] = useState<string[]>([])
@@ -81,6 +82,46 @@ export default function Results({ result, onRestart, onHome }: Props) {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const accuracy = Math.round((score / totalQuestions) * 100)
+
+  const buildShareText = useCallback(() => {
+    const starStr = '★'.repeat(stars) + '☆'.repeat(3 - stars)
+    const lvName = levelNames[lang][level]
+    const reactionStr = avgReactionMs != null
+      ? (lang === 'zh' ? `⚡ 反應 ${(avgReactionMs / 1000).toFixed(2)}s` : `⚡ Reaction ${(avgReactionMs / 1000).toFixed(2)}s`)
+      : ''
+    const streakData = loadData().streak
+    const streakStr = streakData.count > 1
+      ? (lang === 'zh' ? `🔥 ${streakData.count} 天連續訓練` : `🔥 ${streakData.count}-Day Streak`)
+      : ''
+
+    const lines = [
+      lang === 'zh' ? '腦速王 BrainSpeedKing' : 'BrainSpeedKing',
+      `Lv.${level} ${lvName}`,
+      '',
+      `${starStr}  ${score}/${totalQuestions}`,
+      reactionStr,
+      streakStr,
+      '',
+      tr.shareUrl,
+    ].filter(l => l !== undefined)
+
+    return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim()
+  }, [lang, level, stars, score, totalQuestions, avgReactionMs, tr])
+
+  async function handleShare() {
+    const text = buildShareText()
+    if (navigator.share) {
+      try {
+        await navigator.share({ text })
+        return
+      } catch {
+        // 用戶取消或不支援，降級到複製
+      }
+    }
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-8 max-w-sm mx-auto">
@@ -239,6 +280,20 @@ export default function Results({ result, onRestart, onHome }: Props) {
         <p className="text-xs text-[var(--text-secondary)] mb-2">{tr.recentProgress}</p>
         <ProgressChart sessions={sessions} />
       </div>
+
+      {/* 分享按鈕 */}
+      <button
+        onClick={handleShare}
+        className="w-full h-12 mb-3 rounded-xl border-2 border-indigo-200 text-indigo-600
+                   text-sm font-semibold flex items-center justify-center gap-2
+                   hover:bg-indigo-50 transition-colors"
+      >
+        {copied ? (
+          <><span>✓</span> {tr.shareCopied}</>
+        ) : (
+          <><span>📤</span> {tr.shareBtn}</>
+        )}
+      </button>
 
       {/* 按鈕 */}
       <div className="flex gap-3">

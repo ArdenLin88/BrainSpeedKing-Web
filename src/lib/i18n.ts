@@ -94,6 +94,11 @@ export const t = {
     musicPause: '暫停音樂',
     musicPlay: '播放背景音樂',
 
+    // 分享成績
+    shareBtn: '分享成績',
+    shareCopied: '已複製！',
+    shareUrl: 'https://brain-speed-king-web.vercel.app',
+
     // 最佳紀錄
     pbTitle: '本關最佳紀錄',
     pbFirst: '🎉 首次完成本關！',
@@ -165,6 +170,11 @@ export const t = {
     // Music
     musicPause: 'Pause Music',
     musicPlay: 'Play Music',
+
+    // Share
+    shareBtn: 'Share',
+    shareCopied: 'Copied!',
+    shareUrl: 'https://brain-speed-king-web.vercel.app',
 
     // Personal best
     pbTitle: 'Level Best',
