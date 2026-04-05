@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { evaluateLevel } from '../lib/adaptive'
-import { loadData, appendSession, updateLevel, saveData, updateLevelStars } from '../lib/storage'
+import { loadData, appendSession, updateLevel, saveData, updateLevelStars, unlockAchievements } from '../lib/storage'
 import { calculateStreak } from '../lib/streak'
 import { calcStars } from '../lib/stars'
+import { ACHIEVEMENTS, checkNewAchievements } from '../lib/achievements'
 import { useLanguage } from '../contexts/LanguageContext'
 import { t } from '../lib/i18n'
 import ProgressChart from '../components/ProgressChart'
@@ -32,6 +33,7 @@ export default function Results({ result, onRestart, onHome }: Props) {
 
   const [sessions, setSessions] = useState(loadData().sessions)
   const [isPB, setIsPB] = useState(false)
+  const [newAchievements, setNewAchievements] = useState<string[]>([])
 
   useEffect(() => {
     // 儲存本場結果 + 更新 streak + 更新等級
@@ -58,6 +60,15 @@ export default function Results({ result, onRestart, onHome }: Props) {
     // 更新星數（只在有進步時回傳 true）
     const gotPB = updateLevelStars(level, stars)
     setIsPB(gotPB)
+
+    // 檢查成就（在所有更新完成後用最新資料檢查）
+    const finalData = loadData()
+    const latestSession = finalData.sessions[finalData.sessions.length - 1]
+    const newIds = checkNewAchievements(finalData, latestSession, finalData.unlockedAchievements)
+    if (newIds.length > 0) {
+      unlockAchievements(newIds)
+      setNewAchievements(newIds)
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const accuracy = Math.round((score / totalQuestions) * 100)
@@ -123,6 +134,29 @@ export default function Results({ result, onRestart, onHome }: Props) {
           <span className="font-semibold">
             {changed === 'up' ? tr.levelUp(level, newLevel) : tr.levelDown(level, newLevel)}
           </span>
+        </div>
+      )}
+
+      {/* 新成就解鎖通知 */}
+      {newAchievements.length > 0 && (
+        <div className="mb-6 space-y-2">
+          {newAchievements.map(id => {
+            const a = ACHIEVEMENTS.find(x => x.id === id)
+            if (!a) return null
+            const info = lang === 'zh' ? a.zh : a.en
+            return (
+              <div key={id} className="px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 flex items-center gap-3">
+                <span className="text-2xl">{a.icon}</span>
+                <div>
+                  <p className="text-xs text-amber-500 font-bold tracking-wide uppercase">
+                    {lang === 'zh' ? '成就解鎖！' : 'Achievement Unlocked!'}
+                  </p>
+                  <p className="text-sm font-bold text-amber-900">{info.title}</p>
+                  <p className="text-xs text-amber-700">{info.desc}</p>
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 

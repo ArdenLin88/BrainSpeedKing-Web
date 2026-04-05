@@ -15,6 +15,7 @@ export interface AppData {
   }
   sessions: SessionRecord[]
   levelStars: Record<number, number>  // best star rating per level (0–3)
+  unlockedAchievements: string[]
 }
 
 const STORAGE_KEY = 'bsk_data'
@@ -25,6 +26,7 @@ const DEFAULT_DATA: AppData = {
   streak: { count: 0, lastTrainedDate: '' },
   sessions: [],
   levelStars: {},
+  unlockedAchievements: [],
 }
 
 export function loadData(): AppData {
@@ -36,6 +38,7 @@ export function loadData(): AppData {
     if (!parsed.version) return { ...DEFAULT_DATA }
     // 補上舊資料可能缺少的欄位
     if (!parsed.levelStars) parsed.levelStars = {}
+    if (!parsed.unlockedAchievements) parsed.unlockedAchievements = []
     return parsed
   } catch {
     // localStorage 損毀：靜默重置，不崩潰
@@ -61,6 +64,15 @@ export function appendSession(session: SessionRecord): AppData {
 export function updateLevel(newLevel: number): void {
   const data = loadData()
   data.currentLevel = newLevel
+  saveData(data)
+}
+
+export function unlockAchievements(ids: string[]): void {
+  if (ids.length === 0) return
+  const data = loadData()
+  const set = new Set(data.unlockedAchievements)
+  ids.forEach(id => set.add(id))
+  data.unlockedAchievements = [...set]
   saveData(data)
 }
 
