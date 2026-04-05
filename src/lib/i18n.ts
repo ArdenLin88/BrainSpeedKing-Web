@@ -94,6 +94,14 @@ export const t = {
     musicPause: '暫停音樂',
     musicPlay: '播放背景音樂',
 
+    // 最佳紀錄
+    pbTitle: '本關最佳紀錄',
+    pbFirst: '🎉 首次完成本關！',
+    pbScore: '最高分',
+    pbReaction: '最快反應',
+    pbNewScore: '分數破紀錄 🎉',
+    pbNewReaction: '速度破紀錄 🎉',
+
     // 星級評分
     starsEarned: (n: number) => n > 0 ? `本場獲得 ${'★'.repeat(n)}` : '本場未得星',
     starsPB: '最佳紀錄更新！',
@@ -157,6 +165,14 @@ export const t = {
     // Music
     musicPause: 'Pause Music',
     musicPlay: 'Play Music',
+
+    // Personal best
+    pbTitle: 'Level Best',
+    pbFirst: '🎉 First time on this level!',
+    pbScore: 'Best score',
+    pbReaction: 'Best reaction',
+    pbNewScore: 'Score PB! 🎉',
+    pbNewReaction: 'Speed PB! 🎉',
 
     // Stars
     starsEarned: (n: number) => n > 0 ? `You earned ${'★'.repeat(n)}` : 'No stars this round',

@@ -15,7 +15,8 @@ const TOTAL_LEVELS = 22
 
 export default function Home({ onStart, onPractice, onLevelMap }: Props) {
   const data = loadData()
-  const { streak, currentLevel, sessions, unlockedAchievements = [] } = data
+  const { streak, currentLevel, sessions, unlockedAchievements = [], levelBests = {} } = data
+  const currentBest = levelBests[currentLevel] ?? null
   const { lang } = useLanguage()
   const tr = t[lang]
 
@@ -51,7 +52,7 @@ export default function Home({ onStart, onPractice, onLevelMap }: Props) {
         </div>
       )}
 
-      {/* 當前等級 */}
+      {/* 當前等級 + 最佳紀錄 */}
       <div className="mb-8">
         <p className="text-xs text-[var(--text-secondary)] mb-1">{tr.currentLevel}</p>
         <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -60,6 +61,24 @@ export default function Home({ onStart, onPractice, onLevelMap }: Props) {
             {levelNames[lang][currentLevel]}
           </span>
         </p>
+        {currentBest && (
+          <div className="mt-2 flex gap-4 text-xs text-[var(--text-secondary)]">
+            <span>
+              {tr.pbScore}：
+              <span className="font-semibold text-[var(--text-primary)]">
+                {currentBest.score} / 10
+              </span>
+            </span>
+            {currentBest.avgReactionMs != null && (
+              <span>
+                {tr.pbReaction}：
+                <span className="font-semibold text-[var(--text-primary)]">
+                  {(currentBest.avgReactionMs / 1000).toFixed(2)}s
+                </span>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 按鈕群 */}

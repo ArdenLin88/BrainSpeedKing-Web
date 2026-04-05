@@ -15,6 +15,7 @@ export interface AppData {
   }
   sessions: SessionRecord[]
   levelStars: Record<number, number>  // best star rating per level (0–3)
+  levelBests: Record<number, { score: number; avgReactionMs: number | null }>
   unlockedAchievements: string[]
 }
 
@@ -26,6 +27,7 @@ const DEFAULT_DATA: AppData = {
   streak: { count: 0, lastTrainedDate: '' },
   sessions: [],
   levelStars: {},
+  levelBests: {},
   unlockedAchievements: [],
 }
 
@@ -38,6 +40,7 @@ export function loadData(): AppData {
     if (!parsed.version) return { ...DEFAULT_DATA }
     // 補上舊資料可能缺少的欄位
     if (!parsed.levelStars) parsed.levelStars = {}
+    if (!parsed.levelBests) parsed.levelBests = {}
     if (!parsed.unlockedAchievements) parsed.unlockedAchievements = []
     return parsed
   } catch {
@@ -74,6 +77,40 @@ export function unlockAchievements(ids: string[]): void {
   ids.forEach(id => set.add(id))
   data.unlockedAchievements = [...set]
   saveData(data)
+}
+
+export interface PBResult {
+  scorePB: boolean      // 分數破紀錄
+  reactionPB: boolean   // 反應時間破紀錄
+  isFirst: boolean      // 此關第一次打
+}
+
+/** 更新本關最佳紀錄，回傳破了哪些 PB */
+export function updateLevelBests(
+  level: number,
+  score: number,
+  avgReactionMs: number | null
+): PBResult {
+  const data = loadData()
+  const prev = data.levelBests[level]
+  const isFirst = !prev
+
+  const scorePB = isFirst || score > prev.score
+  const reactionPB =
+    avgReactionMs !== null &&
+    (isFirst || prev.avgReactionMs === null || avgReactionMs < prev.avgReactionMs)
+
+  const newBest = {
+    score: isFirst ? score : Math.max(score, prev.score),
+    avgReactionMs:
+      avgReactionMs === null ? (isFirst ? null : prev.avgReactionMs) :
+      isFirst ? avgReactionMs :
+      prev.avgReactionMs === null ? avgReactionMs :
+      Math.min(avgReactionMs, prev.avgReactionMs),
+  }
+  data.levelBests[level] = newBest
+  saveData(data)
+  return { scorePB, reactionPB, isFirst }
 }
 
 export function updateLevelStars(level: number, stars: number): boolean {

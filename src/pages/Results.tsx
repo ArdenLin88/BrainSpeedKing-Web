@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { evaluateLevel } from '../lib/adaptive'
-import { loadData, appendSession, updateLevel, saveData, updateLevelStars, unlockAchievements } from '../lib/storage'
+import { loadData, appendSession, updateLevel, saveData, updateLevelStars, updateLevelBests, unlockAchievements } from '../lib/storage'
+import type { PBResult } from '../lib/storage'
 import { calculateStreak } from '../lib/streak'
 import { calcStars } from '../lib/stars'
 import { ACHIEVEMENTS, checkNewAchievements } from '../lib/achievements'
@@ -33,6 +34,8 @@ export default function Results({ result, onRestart, onHome }: Props) {
 
   const [sessions, setSessions] = useState(loadData().sessions)
   const [isPB, setIsPB] = useState(false)
+  const [pbResult, setPbResult] = useState<PBResult | null>(null)
+  const [bestAfter, setBestAfter] = useState<{ score: number; avgReactionMs: number | null } | null>(null)
   const [newAchievements, setNewAchievements] = useState<string[]>([])
 
   useEffect(() => {
@@ -56,6 +59,12 @@ export default function Results({ result, onRestart, onHome }: Props) {
     // 直接 saveData 完整更新
     saveData(updated)
     setSessions(updated.sessions)
+
+    // 更新最佳紀錄
+    const pb = updateLevelBests(level, score, avgReactionMs)
+    setPbResult(pb)
+    const afterData = loadData()
+    setBestAfter(afterData.levelBests[level] ?? null)
 
     // 更新星數（只在有進步時回傳 true）
     const gotPB = updateLevelStars(level, stars)
@@ -94,6 +103,40 @@ export default function Results({ result, onRestart, onHome }: Props) {
           <> &nbsp;·&nbsp; {tr.avgReaction((avgReactionMs / 1000).toFixed(2))}</>
         )}
       </p>
+
+      {/* 最佳紀錄卡 */}
+      {pbResult && (
+        <div className="mb-4 px-4 py-3 rounded-xl bg-indigo-50 border border-indigo-100">
+          <p className="text-xs text-indigo-400 font-semibold mb-2">{tr.pbTitle}</p>
+          {pbResult.isFirst ? (
+            <p className="text-sm font-bold text-indigo-700">{tr.pbFirst}</p>
+          ) : (
+            <div className="flex gap-6">
+              <div>
+                <p className="text-xs text-indigo-400 mb-0.5">{tr.pbScore}</p>
+                <p className="text-lg font-bold tabular-nums text-indigo-800">
+                  {bestAfter?.score ?? score}
+                  <span className="text-xs font-normal text-indigo-400"> / 10</span>
+                </p>
+                {pbResult.scorePB && (
+                  <p className="text-xs text-green-600 font-bold">{tr.pbNewScore}</p>
+                )}
+              </div>
+              {bestAfter?.avgReactionMs != null && (
+                <div>
+                  <p className="text-xs text-indigo-400 mb-0.5">{tr.pbReaction}</p>
+                  <p className="text-lg font-bold tabular-nums text-indigo-800">
+                    {(bestAfter.avgReactionMs / 1000).toFixed(2)}s
+                  </p>
+                  {pbResult.reactionPB && (
+                    <p className="text-xs text-green-600 font-bold">{tr.pbNewReaction}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 星級 */}
       <div className="mb-6 flex items-center gap-3">
