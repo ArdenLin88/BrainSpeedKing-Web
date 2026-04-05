@@ -2,10 +2,12 @@ import { useState } from 'react'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Results from './pages/Results'
+import LevelMap from './pages/LevelMap'
 import { toggleMusic, isMusicPlaying } from './lib/bgMusic'
+import { loadData, updateLevel } from './lib/storage'
 import type { QuizResult } from './pages/Quiz'
 
-type Page = 'home' | 'quiz' | 'results'
+type Page = 'home' | 'quiz' | 'results' | 'levelmap'
 
 export default function App() {
   const [page, setPage] = useState<Page>('home')
@@ -22,6 +24,11 @@ export default function App() {
     setMusicOn(nowPlaying)
   }
 
+  function handleSelectLevel(level: number) {
+    updateLevel(level)
+    setPage('quiz')
+  }
+
   // 確保 isMusicPlaying 與 state 同步（首次互動後 AudioContext 可能自啟）
   const playing = musicOn || isMusicPlaying()
 
@@ -36,7 +43,16 @@ export default function App() {
         />
       )
     }
-    return <Home onStart={() => setPage('quiz')} />
+    if (page === 'levelmap') {
+      return (
+        <LevelMap
+          currentLevel={loadData().currentLevel}
+          onBack={() => setPage('home')}
+          onSelectLevel={handleSelectLevel}
+        />
+      )
+    }
+    return <Home onStart={() => setPage('quiz')} onLevelMap={() => setPage('levelmap')} />
   })()
 
   return (

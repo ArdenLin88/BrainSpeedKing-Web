@@ -4,9 +4,10 @@ import TipCard from '../components/TipCard'
 
 interface Props {
   onStart: () => void
+  onLevelMap: () => void
 }
 
-export default function Home({ onStart }: Props) {
+export default function Home({ onStart, onLevelMap }: Props) {
   const data = loadData()
   const { streak, currentLevel, sessions } = data
 
@@ -35,12 +36,27 @@ export default function Home({ onStart }: Props) {
     22: '大數完全乘法',
   }
 
+  const TOTAL_LEVELS = 22
+
   return (
     <div className="flex flex-col min-h-screen bg-[var(--bg)] px-4 py-8 max-w-sm mx-auto">
-      {/* 品牌名 */}
-      <p className="text-xs text-[var(--text-secondary)] tracking-widest uppercase mb-6">
-        BrainSpeedKing
-      </p>
+      {/* 品牌名 + 關卡地圖按鈕 */}
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-xs text-[var(--text-secondary)] tracking-widest uppercase">
+          BrainSpeedKing
+        </p>
+        <button
+          onClick={onLevelMap}
+          title="關卡地圖"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                     bg-indigo-50 border border-indigo-100
+                     text-indigo-600 text-xs font-semibold
+                     hover:bg-indigo-100 transition-colors"
+        >
+          <span>🗺️</span>
+          <span>{currentLevel}/{TOTAL_LEVELS} 關</span>
+        </button>
+      </div>
 
       {/* Streak 橫幅 */}
       {streak.count > 0 && (
